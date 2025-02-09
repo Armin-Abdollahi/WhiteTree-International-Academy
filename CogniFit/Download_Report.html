@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Download</title>
+    <style>
+        :root {
+            --primary-color: #002147;
+            --secondary-color: #0077BE;
+            --background-color: #F0F8FF;
+            --text-color: #333;
+            --progress-color: #0077BE;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            overflow-x: hidden; /* جلوگیری از اسکرول افقی */
+        }
+
+        .header {
+            background-color: var(--primary-color);
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-evenly;
+            align-items: center;
+            padding: 20px;
+            width: 100%;
+            background-color: var(--background-color);
+            box-sizing: border-box;
+        }
+
+        .nav .step {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: white;
+            border: 2px solid var(--progress-color);
+            color: var(--progress-color);
+            position: relative;
+        }
+
+        .nav .step.active {
+            background-color: var(--progress-color);
+            color: white;
+        }
+
+        .nav .step::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 200px;
+            height: 2px;
+            background-color: var(--progress-color);
+        }
+
+        .nav .step:first-child::after {
+            left: 100%;
+        }
+
+        .nav .step:nth-child(2)::after {
+            left: -100px;
+            width: calc(100% + 200px);
+        }
+
+        .nav .step:last-child::after {
+            right: 100%;
+        }
+
+        .nav .step.active::after {
+            background-color: var(--progress-color);
+        }
+
+        .logo {
+            max-width: 100px;
+        }
+
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
+            margin-top: 20px;
+            width: 100%;
+            max-width: 500px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+
+        .download-button {
+            padding: 12px 24px;
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+            text-decoration: none;
+        }
+
+        .download-button:hover {
+            background-color: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <img src="/images/WhiteTree2.png" alt="White Tree Logo" class="logo">
+        <img src="/images/CogniFit.png" alt="CogniFit Logo" class="logo">
+    </div>
+    <div class="nav">
+        <div class="step">1</div>
+        <div class="step">2</div>
+        <div class="step active">3</div>
+    </div>
+    <div class="container">
+        <h1>Download Your Report</h1>
+        <p>Your report is ready for download. Click the button below to get your PDF report.</p>
+        <a href="\report.pdf" class="download-button" download>Download Report</a>
+    </div>
+</body>
+</html>
