@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CogniFit Data Filter</title>
+    <style>
+        :root {
+            --primary-color: #002147;
+            --secondary-color: #0077BE;
+            --background-color: #F0F8FF;
+            --text-color: #333;
+            --progress-color: #0077BE;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            overflow-x: hidden; /* جلوگیری از اسکرول افقی */
+        }
+
+        .header {
+            background-color: var(--primary-color);
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-evenly;
+            align-items: center;
+            padding: 20px;
+            width: 100%;
+            background-color: var(--background-color);
+            box-sizing: border-box;
+        }
+
+        .nav .step {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: white;
+            border: 2px solid var(--progress-color);
+            color: var(--progress-color);
+            position: relative;
+        }
+
+        .nav .step::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 200px;
+            height: 2px;
+            background-color: var(--progress-color);
+        }
+
+        .nav .step:first-child::after {
+            left: 100%;
+        }
+
+        .nav .step:nth-child(2)::after {
+            left: -100px;
+            width: calc(100% + 200px);
+        }
+
+        .nav .step:last-child::after {
+            right: 100%;
+        }
+
+        .nav .step.active {
+            background-color: var(--progress-color);
+            color: white;
+        }
+
+        .nav .step.active::after {
+            background-color: var(--progress-color);
+        }
+
+        .logo {
+            max-width: 100px;
+        }
+
+        .content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            font-size: 2.5em;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .filter-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 500px;
+            box-sizing: border-box;
+        }
+
+        .filter-form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        input, select {
+            margin: 5px 0 15px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 12px 24px;
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: var(--primary-color);
+        }
+
+        #results {
+            margin-top: 30px;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .date-time-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        .date-time-container input {
+            flex: 1;
+        }
+
+        .next-button {
+            margin-top: 20px;
+            padding: 12px 24px;
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+            text-align: center;
+        }
+
+        .next-button:hover {
+            background-color: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <img src="/images/WhiteTree2.png" alt="White Tree Logo" class="logo">
+        <img src="/images/CogniFit.png" alt="CogniFit Logo" class="logo">
+    </div>
+    <div class="nav">
+        <div class="step">1</div>
+        <div class="step active">2</div>
+        <div class="step">3</div>
+    </div>
+    <div class="content">
+        <h1>CogniFit Data Filter</h1>
+        <div class="filter-container">
+            <form class="filter-form" onsubmit="filterData(event)">
+                <label for="filterType">Filter Type:</label>
+                <select id="filterType" required onchange="updateFilterValueField()">
+                    <option value="user_id">User ID</option>
+                    <option value="task_name">Task Name</option>
+                    <option value="assessment_type">Assessment Type</option>
+                </select>
+
+                <div id="filterValueContainer">
+                    <label for="filterValue">Filter Value:</label>
+                    <input type="text" id="filterValue" required>
+                </div>
+
+                <div id="taskNameContainer" style="display: none;">
+                    <label for="taskName">Task Name:</label>
+                    <select id="taskName" required>
+                        <option value="Inhibition of Return Test">Inhibition of Return Test</option>
+                        <option value="Selective Attention Test">Selective Attention Test</option>
+                        <option value="Visual Memory Test">Visual Memory Test</option>
+                        <option value="Digit Span Test">Digit Span Test</option>
+                        <option value="Maze Test">Maze Test</option>
+                        <option value="Visual Working Memory Span Test">Visual Working Memory Span Test</option>
+                        <option value="Eye-Hand Coordination Test (MUD)">Eye-Hand Coordination Test (MUD)</option>
+                        <option value="Eye-Hand Coordination Test (FTUD)">Eye-Hand Coordination Test (FTUD)</option>
+                        <option value="Psychomotor Vigilance Test">Psychomotor Vigilance Test</option>
+                    </select>
+                </div>
+
+                <div id="assessmentTypeContainer" style="display: none;">
+                    <label for="assessmentDate">Assessment Date:</label>
+                    <div class="date-time-container">
+                        <input type="date" id="assessmentDate" required>
+                        <input type="time" id="assessmentTime" required>
+                    </div>
+                </div>
+
+                <button type="submit">Apply Filter</button>
+            </form>
+        </div>
+        <div id="results"></div>
+        <button class="next-button" onclick="goToNextPage()">Next</button>
+    </div>
+
+    <script>
+        function updateFilterValueField() {
+            const filterType = document.getElementById('filterType').value;
+            const filterValueContainer = document.getElementById('filterValueContainer');
+            const taskNameContainer = document.getElementById('taskNameContainer');
+            const assessmentTypeContainer = document.getElementById('assessmentTypeContainer');
+
+            filterValueContainer.style.display = 'none';
+            taskNameContainer.style.display = 'none';
+            assessmentTypeContainer.style.display = 'none';
+
+            if (filterType === 'task_name') {
+                taskNameContainer.style.display = 'block';
+            } else if (filterType === 'assessment_type') {
+                assessmentTypeContainer.style.display = 'block';
+            } else {
+                filterValueContainer.style.display = 'block';
+            }
+        }
+
+        async function filterData(event) {
+            event.preventDefault();
+            const filterType = document.getElementById('filterType').value;
+            let filterValue;
+
+            if (filterType === 'task_name') {
+                filterValue = document.getElementById('taskName').value;
+            } else if (filterType === 'assessment_type') {
+                const date = document.getElementById('assessmentDate').value;
+                const time = document.getElementById('assessmentTime').value;
+                filterValue = `${date} ${time}`;
+            } else {
+                filterValue = document.getElementById('filterValue').value;
+            }
+
+            try {
+                const response = await fetch('/api/filter', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ filterType, filterValue }),
+                });
+
+                if (!response.ok) {
+                    throw new Error('Filter request failed');
+                }
+
+                const data = await response.json();
+                displayResults(data);
+
+                // Save filtered data as an Excel file
+                await saveAsExcel(data);
+
+                // Redirect to the download report page
+                window.location.href = 'Download_Report.html';
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while filtering the data. Please try again.');
+            }
+        }
+
+        function goToNextPage() {
+            window.location.href = 'Download_Report.html';
+        }
+    </script>
+</body>
+</html>
